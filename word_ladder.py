@@ -1,6 +1,10 @@
 #!/bin/python3
 
 
+from collections import deque
+import copy
+
+
 def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     '''
     Returns a list satisfying the following properties:
@@ -31,6 +35,32 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     HINT:
     See <https://github.com/mikeizbicki/cmc-csci046/issues/472> for a discussion about a common memory management bug that causes the generated word ladders to be too long in some cases.
     '''
+    if start_word == end_word:
+        return [start_word]
+    if start_word not in dictionary or end_word not in dictionary:
+        return None
+    wordset = set()
+    with open(dictionary_file, 'r', encoding='utf-8') as f:
+        for line in f:
+            wordset.add(line.strip())
+
+    wordset.remove(start_word)
+    stack = [start_word]
+    queue = [stack]
+
+    for current_stack in queue:
+        top_word = current_stack[-1]
+        for current_word in wordset:
+            if _adjacent(current_word, top_word):
+                if current_word == end_word:
+                    return current_stack + [word]
+
+                stack_copy = copy.copy(current_stack)
+                stack_copy.append(current_word)
+                queue.append(stack_copy)
+                words_to_remove.append(word)
+        for word in words_to_remove:
+            wordset.remove(word)
 
 
 def verify_word_ladder(ladder):
@@ -43,7 +73,12 @@ def verify_word_ladder(ladder):
     >>> verify_word_ladder(['stone', 'shone', 'phony'])
     False
     '''
-
+    if len(ladder) <=1:
+        return True
+    for if in range(len(ladder) - 1):
+        if _adjacent(ladder[i], ladder[i+1]) == False:
+            return False
+    return True
 
 def _adjacent(word1, word2):
     '''
@@ -55,3 +90,12 @@ def _adjacent(word1, word2):
     >>> _adjacent('stone','money')
     False
     '''
+    if len(word1) != len(word2):
+        return False
+    differences = 0
+    for i in range (len(word1)):
+        if word1[i] != word2[i]:
+            differences += 1
+            if differences > 1:
+                return False
+    return differences == 1
