@@ -41,7 +41,7 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
     with open(dictionary_file, 'r', encoding='utf-8') as f:
         for line in f:
             wordset.add(line.strip())
-    if start_word not in dictionary or end_word not in wordset:
+    if start_word not in wordset or end_word not in wordset:
         return None
 
     wordset.remove(start_word)
@@ -54,7 +54,7 @@ def word_ladder(start_word, end_word, dictionary_file='words5.dict'):
         for current_word in wordset:
             if _adjacent(current_word, top_word):
                 if current_word == end_word:
-                    return current_stack + [word]
+                    return current_stack + [current_word]
 
                 stack_copy = copy.copy(current_stack)
                 stack_copy.append(current_word)
@@ -77,7 +77,7 @@ def verify_word_ladder(ladder):
     if len(ladder) <= 1:
         return True
     for i in range((len(ladder)) - 1):
-        if not _adjacent(ladder[i], ladder[i+1]):
+        if not _adjacent(ladder[i], ladder[i + 1]):
             return False
     return True
 
